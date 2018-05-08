@@ -1,25 +1,17 @@
 #!/bin/sh
 
-# Set source and target directories
-powerline_fonts_dir="$( cd "$( dirname "$0" )" && pwd )"
+install_dir="$( cd "$( dirname "$0" )" && pwd )"
 
 # if an argument is given it is used to select which fonts to install
 prefix="$1"
+font_dir="/usr/share/fonts/"
 
-if test "$(uname)" = "Darwin" ; then
-  # MacOS
-  font_dir="$HOME/Library/Fonts"
-else
-  # Linux
-  font_dir="$HOME/.local/share/fonts"
-  mkdir -p $font_dir
-fi
-
-# Copy all fonts to user fonts directory
+# Copy all fonts to global fonts directory
 echo "Copying fonts..."
-find "$powerline_fonts_dir" \( -name "$prefix*.[ot]tf" -or -name "$prefix*.pcf.gz" \) -type f -print0 | xargs -0 -n1 -I % cp "%" "$font_dir/"
+find "$install_dir" \( -name "$prefix*.ttf" \) -type f -print0 | xargs -0 -n1 -I % sudo cp "%" "$font_dir/TTF/"
+find "$install_dir" \( -name "$prefix*.otf" \) -type f -print0 | xargs -0 -n1 -I % sudo cp "%" "$font_dir/OTF/"
 
-# Reset font cache on Linux
+# Reset font cache
 if which fc-cache >/dev/null 2>&1 ; then
     echo "Resetting font cache, this may take a moment..."
     fc-cache -f "$font_dir"
